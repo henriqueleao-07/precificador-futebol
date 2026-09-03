@@ -2,13 +2,27 @@ import pandas as pd
 import numpy as np
 from numpy import random
 
-ligas_disponiveis = ["Premier League","La Liga","Bundesliga","Serie A","Ligue 1"]
-print("Escolha uma das 5 grandes ligas")
+ligas = {
+    "1": ("Premier League", "E0"),
+    "2": ("La Liga", "SP1"),
+    "3": ("Bundesliga", "D1"),
+    "4": ("Serie A", "I1"),
+    "5": ("Ligue 1", "F1"),
+    }
+print("Escolha uma das 5 principais grandes ligas: ")
+for chave, (nome, _) in ligas.items():
+    print(f"[{chave}] {nome}")
 
-#Nesse primeiro momento, para escolher a liga desejada é necessário modificar a url apos a ultima '/' e antes do '.csv' da forma como esta escrita abaixo.
-#Isso será modificado, melhorando a usabilidade do código.
-#E0 = Premier league. SP1 = La liga. D1 = Bundesliga. I1 = Serie A. F1 = Ligue 1
-url = "https://www.football-data.co.uk/mmz4281/2526/D1.csv"
+escolha = input("\n Digite o nome da liga desejada: ")
+
+if escolha not in ligas:
+    print("[ERRO!] opção invalida, digite uma das ligas desejadas: ")
+    exit()
+
+nome_liga, codigo_liga = ligas[escolha]
+print(f"\n Carregando dados da {nome_liga}...")
+
+url = f"https://www.football-data.co.uk/mmz4281/2526/{codigo_liga}.csv"
 dados_originais = pd.read_csv(url)
 
 dados = dados_originais[['HomeTeam', 'AwayTeam', 'FTHG', 'FTAG']].copy()
@@ -51,8 +65,6 @@ else:
         xg_casa = (forca_atq_casa * forca_def_fora * media_gols_casa_liga).round(2)
         xg_fora = (forca_atq_fora * forca_def_casa * media_gols_fora_liga).round(2)
         
-        xg_fora = (forca_atq_fora * forca_def_casa * media_gols_fora_liga).round(2)
-        
         return xg_casa, xg_fora
 
     def calcular_prob_gols(distribuicao, n_gols):
@@ -91,7 +103,3 @@ else:
     print("-" * 50)
     print("Compare essas Odds com as da sua casa de apostas.")
     print("Se a Odd da casa for maior que a calculada aqui, pode haver valor.")
-
-
-
-
